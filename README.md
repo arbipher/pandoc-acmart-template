@@ -6,7 +6,8 @@ It works with `pandoc 2.17`.
 
 # Usage
 
-`make example.pdf`
+`make main-full` to build pdf from a standalone `main-full.md`
+`make main-outline` to build pdf from a outline file `main-outline.md`, which includes `main-section-intro.md`.
 
 See [Makefile](./Makefile).
 
@@ -58,6 +59,16 @@ This is what `citeproc` solves and that's why you need to choose one [cite-metho
 ## template
 
 The default latex template can be checked via `pandoc -D latex`.
+
+## metadata-files and default
+
+These are multiple places to set key-values pairs in a YAML format. However, not any pairs are effective.
+
+`pandoc --default=FILE` accepts a default file with [restricted](https://pandoc.org/MANUAL.html#default-files) keys. `metadata-files` are used in default file, but not [YAML metadata block](https://pandoc.org/MANUAL.html#extension-yaml_metadata_block) of a document.
+
+## inclusion
+
+`pandoc` support merging files sequentially by `pandoc section1.md section2.md ...`. To include a file, you may use a filter e.g. [pandoc-include](https://github.com/DCsunset/pandoc-include) (used in this repo) or [pandoc/lua-filter](https://github.com/pandoc/lua-filters/blob/master/include-files/README.md) (not used here).
 
 # Reference
 

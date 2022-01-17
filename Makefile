@@ -1,8 +1,17 @@
-%.pdf : %.md
-		pandoc $< -o build/$@ --template=template.tex --csl=acm-sig-proceedings.csl --citeproc
+main-full : main-full.md
+		pandoc $< -o build/$@.pdf --template=template.tex \
+			--csl=acm-sig-proceedings.csl --citeproc \
+			--metadata-file default.yaml
 
-debug : example.md
-		pandoc $< -o example_wsl.html -s --csl=acm-sig-proceedings.csl --citeproc
+# `--filter` should be ahead of `--citeproc`
+main-outline : main-outline.md
+		pandoc $< -o build/$@.pdf --template=template.tex \
+			--filter pandoc-include \
+			--csl=acm-sig-proceedings.csl --citeproc \
+			--metadata-file default.yaml
+
+debug : main.md
+		pandoc $< -o main.html -s --csl=acm-sig-proceedings.csl --citeproc
 
 clean :
 		rm -f build/*

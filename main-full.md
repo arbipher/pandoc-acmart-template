@@ -1,11 +1,12 @@
 ---
-title: A Survey on a Nice Subject
-author:
-  name: Jane Doe
-  email: alice@example.com
-  affiliation: Delft University of Technology
-  country: Netherlands
+title: A Good Example Title
 abstract: This is the text of the abstract. An abstract gives an overview of the survey (what we survey and why) as well as what the main contributions are. Check other computing surveys journal papers for the style.
+author:
+  name: Shiwei Weng
+  email: weng@cs.jhu.edu
+  affiliation: Johns Hopkins University
+  country: USA
+
 bibliography: references.bib
 ---
 
@@ -53,8 +54,6 @@ contributions of this work can be summarized as follows.
   enable a single radio transceiver in a sensor device to achieve
   scalable performance, avoiding the nonscalable "one
   control channel + multiple data channels'' design [@Natarajan-01].
-
-
 
 # MMSN Protocol
 
