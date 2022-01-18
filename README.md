@@ -70,6 +70,12 @@ These are multiple places to set key-values pairs in a YAML format. However, not
 
 `pandoc` support merging files sequentially by `pandoc section1.md section2.md ...`. To include a file, you may use a filter e.g. [pandoc-include](https://github.com/DCsunset/pandoc-include) (used in this repo) or [pandoc/lua-filter](https://github.com/pandoc/lua-filters/blob/master/include-files/README.md) (not used here).
 
+## unicode
+
+`albatross 0x222A` can check which font contain `u+222A`.
+
+I hope to use unicode in markdown and have them rendered correctly in the pdf. It's more tricky if I also hope to keep the unicode in the html output, which means I would prefer to use `∪`(U+222A) rather than `$\cup$` in the markdown. Let's assume it's a valid requirement. This set-union symbol is not included in `\usepackage[utf8]{inputenc}`. Even it's in `\usepackage[utf8x]{inputenc}`, `utf8x` is not suggested any more.
+
 # Reference
 
 https://ulriklyngs.com/post/2018/07/18/how-to-write-acm-articles-with-r-markdown/

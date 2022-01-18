@@ -2,6 +2,8 @@
 
 - Add an example for file inclusion.
 - Use a separate metadata file.
+- Start to solve unicode problems.
+- Keep annotated `pandoc-default.tex` (pandoc default latex template) to keep track of segments used in `template.tex`.
 
 # v0.0.1
 
