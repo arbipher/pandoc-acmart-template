@@ -7,14 +7,10 @@ It works with `pandoc 2.17`.
 # Usage
 
 `make main-full` to build pdf from a standalone `main-full.md`
+
 `make main-outline` to build pdf from a outline file `main-outline.md`, which includes `main-section-intro.md`.
 
 See [Makefile](./Makefile).
-
-# To-do
-
-- [ ] explain more about `template.tex`
-- [ ] update `example.md` to make it a base for my daily work
 
 # Notes
 
@@ -75,6 +71,48 @@ These are multiple places to set key-values pairs in a YAML format. However, not
 `albatross 0x222A` can check which font contain `u+222A`.
 
 I hope to use unicode in markdown and have them rendered correctly in the pdf. It's more tricky if I also hope to keep the unicode in the html output, which means I would prefer to use `∪`(U+222A) rather than `$\cup$` in the markdown. Let's assume it's a valid requirement. This set-union symbol is not included in `\usepackage[utf8]{inputenc}`. Even it's in `\usepackage[utf8x]{inputenc}`, `utf8x` is not suggested any more.
+
+## font
+
+`acmart` uses Libertine for text, Inconsolata for monospaced font and newtxmath for math. You may need to install it e.g. `sudo apt install fonts-inconsolata`. Fonts used can be checked from the output pdf via `strings build/debug.pdf | grep FontName`.
+
+After checking
+- `inconsolata` is in Tex live.
+- `sudo /usr/local/texlive/2021/bin/x86_64-linux/tlmgr info inconsolata`
+- `kpsewhich inconsolata.sty`
+
+I realize the easy fix is to add `basicstyle=\ttfamily` in listings options `\lstset{ }`
+
+## center
+
+Centering in markdown which results in a html class `.center` can be achieved by wrapping 
+
+```markdown
+::: {.center} 
+
+CONTENT
+
+:::
+```
+
+However, the centering is not in the pandoc ast yet for latex.
+
+You can also hardcode the latex in the markdown as
+
+```markdown
+```{=latex}
+\begin{center}
+`` `
+
+CONTENT
+
+```{=latex}
+\end{center}
+`` `
+
+```
+
+Or you can also config the listings as `\lstset{xleftmargin=.2\textwidth, xrightmargin=.2\textwidth}` which also centers the listing. See https://stackoverflow.com/questions/3106419/center-latex-lstlisting
 
 # Reference
 

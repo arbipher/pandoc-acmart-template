@@ -29,7 +29,10 @@
 %
 % unicode support
 %
-\input{unicode_to_latex.tex}
+\input{unicode-to-latex.tex}
+
+% href support
+\usepackage{hyperref}
 
 % When render pdfs, pandoc requires these packages are avaiable in Tex Live
 % https://pandoc.org/MANUAL.html#creating-a-pdf
@@ -73,6 +76,27 @@ $endif$
 \urlstyle{same} % disable monospaced font for URLs
 $if(verbatim-in-note)$
 \VerbatimFootnotes % allow verbatim text in footnotes
+$endif$
+
+%
+
+$if(listings)$
+\usepackage{listings}
+\newcommand{\passthrough}[1]{#1}
+\lstset{defaultdialect=[5.3]Lua}
+\lstset{defaultdialect=[x86masm]Assembler}
+
+
+% listings
+\lstset{
+  basicstyle=\ttfamily,
+  numbers=left,
+  numbersep=10pt,
+  frame=single,
+  framerule=0pt,
+  numberstyle=\tiny,
+}
+
 $endif$
 
 % 

@@ -1,3 +1,8 @@
+# v0.0.3
+
+- Support latex package `listings`.
+- Provide centering ideas.
+
 # v0.0.2
 
 - Add an example for file inclusion.
