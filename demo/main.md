@@ -11,7 +11,7 @@ bibliography: references.bib
 ---
 
 <!-- # Introduction -->
-!include main-section-intro.md
+!include demo/section-intro.md
 
 # MMSN Protocol
 

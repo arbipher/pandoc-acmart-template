@@ -1,34 +1,47 @@
-ARGS = \
+# basic
+
+BUILD = build
+
+all:
+	mkdir -p $(BUILD)
+
+clean :
+		rm -f $(BUILD)/*
+
+# pandoc args
+
+OPT-CITEPROC = \
+	--csl=acm-sig-proceedings.csl --citeproc \
+	
+OPT-PDF = \
 	--listings \
 	--template=template.tex \
-	--csl=acm-sig-proceedings.csl --citeproc \
-	--metadata-file default.yaml \
 	--pdf-engine=lualatex
 
+ARGS-BASIC = \
+	--filter pandoc-include \
+	--listings \
+	--metadata-file default.yaml
+
+ARGS-HTML = \
+	$(OPT-CITEPROC) \
+	$(ARGS-BASIC)
+
+# `--filter` should be ahead of `--citeproc`
+ARGS-PDF = \
+	$(ARGS-BASIC) \
+	$(OPT-CITEPROC) \
+	$(OPT-PDF)
+
+# projects
+
+demo : demo/main.md
+	pandoc $< -o $(BUILD)/$@.pdf $(ARGS-PDF) --resource-path=demo
+
+# Not used
+#
+# -f markdown+implicit_header_references \
 # -V 'mainfont:DejaVuSerif' \
 # -V 'sansfont:DejaVuSans' \
 # -V 'monofont:DejaVuSansMono' \
 # -V 'mathfont:TeXGyreDejaVuMath-Regular'
-
-ARGS-INC = \
-	--filter pandoc-include \
-	$(ARGS)
-
-ARGS-HTML = \
-	--filter pandoc-include \
-	--metadata-file default.yaml
-
-main-full : main-full.md
-		pandoc $< -o build/$@.pdf $(ARGS)
-
-# `--filter` should be ahead of `--citeproc`
-main-outline : main-outline.md
-		pandoc $< -o build/$@.pdf $(ARGS-INC)
-
-debug : main.md
-		pandoc $< -o build/$@.tex $(ARGS-INC)
-		pandoc $< -o build/$@.html $(ARGS-HTML)
-		pandoc $< -o build/$@.pdf $(ARGS-INC)
-
-clean :
-		rm -f build/*

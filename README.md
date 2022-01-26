@@ -114,6 +114,15 @@ CONTENT
 
 Or you can also config the listings as `\lstset{xleftmargin=.2\textwidth, xrightmargin=.2\textwidth}` which also centers the listing. See https://stackoverflow.com/questions/3106419/center-latex-lstlisting
 
+https://github.com/jgm/pandoc/issues/719
+
+## section link and number
+
+It's sutble to have result like `section 2` in both pdf and html. The result is `2` in pdf is usually computed by `\ref{LABEL-FOR-THE-SECOND-SECTION}` while html cannot compute it. I don't find a nice way to solve it. The pandoc extension for html has a problem: I don't want it in the pdf result. The current solution is I have to repeat it somehow like
+```
+Section `\ref{LABEL-FOR-THE-SECOND-SECTION}`{=latex}[`2`{=html}](#LABEL-FOR-THE-SECOND-SECTION)`
+```
+
 # Reference
 
 https://ulriklyngs.com/post/2018/07/18/how-to-write-acm-articles-with-r-markdown/

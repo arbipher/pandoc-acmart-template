@@ -1,4 +1,4 @@
-\documentclass[manuscript, timestamp, review, natbib=false]{acmart}
+\documentclass[manuscript, timestamp, review, authorversion, nonacm, natbib=false]{acmart}
 
 \usepackage[ruled]{algorithm2e} % For algorithms
 \renewcommand{\algorithmcfname}{ALGORITHM}
@@ -82,20 +82,54 @@ $endif$
 
 $if(listings)$
 \usepackage{listings}
-\newcommand{\passthrough}[1]{#1}
+
 \lstset{defaultdialect=[5.3]Lua}
 \lstset{defaultdialect=[x86masm]Assembler}
 
 
+% from https://www.overleaf.com/learn/latex/Code_listing#Code_styles_and_colours
+\usepackage{xcolor}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
 % listings
 \lstset{
+  % style - color
+  commentstyle=\color{codegreen},
+  keywordstyle=\color{blue},
+  numberstyle=\tiny\color{codegray},
+  stringstyle=\color{codepurple},
+  % style - basic
   basicstyle=\ttfamily,
   numbers=left,
   numbersep=10pt,
-  frame=single,
-  framerule=0pt,
+  frame=bottomline,
+  framerule=1pt,
   numberstyle=\tiny,
+  captionpos=b,
+  % config
+  breaklines,
+  breakatwhitespace
+  % literate={\_}{}{0\discretionary{\_}{}{\_}}%
 }
+
+% custom language in listings is not supported by pandoc yet. See [Todo.md]
+\lstdefinelanguage{pseudo}{
+    keywords={for, case, is},
+    sensitive=true, % keywords are not case-sensitive
+    morecomment=[l]{//}, % l is for line comment
+    morecomment=[s]{/*}{*/}, % s is for start and end delimiter
+    morestring=[b]" % defines that strings are enclosed in double quotes
+} %
+
+% is command dynamic evaluated?
+% \NewCommandCopy{\oldlstinline}{\lstinline}
+% \let\oldlstinline\lstinline
+% \renewcommand{\lstinline}[1]{\oldlstinline[breaklines]{#1}}
+\newcommand{\passthrough}[1]{#1}
 
 $endif$
 
@@ -147,13 +181,15 @@ $if(subtitle)$
 \subtitle{$subtitle$}
 $endif$
 
+$if(thanks)$\thanks{$thanks$}$endif$
 
-\author{$author.name$}
-\affiliation{%
-  \institution{$author.affiliation$}
-  \country{$author.country$}}
-\email{$author.email$}
-
+$for(author)$
+  \author{$author.name$}
+  \affiliation{%
+    \institution{$author.affiliation$}
+    \country{$author.country$}}
+  \email{$author.email$}
+$endfor$
 
 $if(abstract)$
 \begin{abstract}
@@ -166,5 +202,7 @@ $endif$
 \renewcommand{\shortauthors}{$author.name$}
 
 $body$
+
+\bibliographystyle{ACM-Reference-Format}
 
 \end{document}
