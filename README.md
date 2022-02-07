@@ -123,6 +123,16 @@ It's sutble to have result like `section 2` in both pdf and html. The result is 
 Section `\ref{LABEL-FOR-THE-SECOND-SECTION}`{=latex}[`2`{=html}](#LABEL-FOR-THE-SECOND-SECTION)`
 ```
 
+## acmart
+
+`\makeatletter` is unnecessary in `.sty` or `.cls` files, as the default catcode regime includes it
+
+https://tex.stackexchange.com/questions/62583/is-it-really-bad-to-use-makeatletter-and-makeatother-in-a-package-or-class-fil
+
+## columns layout
+
+I use https://github.com/jdutant/columns.
+
 # Reference
 
 https://ulriklyngs.com/post/2018/07/18/how-to-write-acm-articles-with-r-markdown/

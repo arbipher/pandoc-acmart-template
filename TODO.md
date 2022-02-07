@@ -1,5 +1,6 @@
 # To-do
 
+- [ ] Make a demo on https://www.logicmatters.net/latex-for-logicians/
 - [ ] Try to use `algorithem2e`.
 - [ ] Read https://www.flutterbys.com.au/stats/tut/tut17.3.html
 - [ ] Test Definition list (See https://www.flutterbys.com.au/stats/tut/tut17.3.html)
