@@ -10,6 +10,8 @@ author:
 bibliography: references.bib
 ---
 
+!include demo/column.md
+
 <!-- # Introduction -->
 !include demo/section-intro.md
 

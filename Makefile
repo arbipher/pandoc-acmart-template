@@ -2,7 +2,7 @@
 
 BUILD = build
 
-.PHONY: demo
+.PHONY: demo snippet
 
 all:
 	mkdir -p $(BUILD)
@@ -30,7 +30,6 @@ ARGS-BASIC = \
 
 ARGS-HTML = \
 	$(OPT-CITEPROC) \
-	--standalone \
 	$(ARGS-BASIC)
 
 # `--filter` should be ahead of `--citeproc`
@@ -39,10 +38,19 @@ ARGS-PDF = \
 	$(OPT-CITEPROC) \
 	$(OPT-PDF)
 
+ARGS-PDF-MINIMAL = \
+	--pdf-engine=lualatex
+
 # projects
+
+snippet: 
+	pandoc snippet/feature1.md -o $(BUILD)/feature1.html $(ARGS-HTML) --resource-path=snippet
+	pandoc snippet/feature1.md --metadata-file=snippet/meta.yaml -o $(BUILD)/feature1.tex $(ARGS-PDF-MINIMAL) --resource-path=snippet
+	pandoc snippet/feature1.md --metadata-file=snippet/meta.yaml -o $(BUILD)/feature1.pdf $(ARGS-PDF-MINIMAL) --resource-path=snippet
 
 demo : demo/main.md
 	pandoc $< -o $(BUILD)/$@.html $(ARGS-HTML) --resource-path=demo
+	pandoc $< -o $(BUILD)/$@.tex $(ARGS-PDF) --resource-path=demo
 	pandoc $< -o $(BUILD)/$@.pdf $(ARGS-PDF) --resource-path=demo
 
 # Not used
