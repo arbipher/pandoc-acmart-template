@@ -22,6 +22,8 @@ OPT-PDF = \
 	--template=template.tex \
 	--pdf-engine=lualatex
 
+# -f gfm+yaml_metadata_block \
+
 ARGS-BASIC = \
 	--filter pandoc-include \
 	--lua-filter columns.lua \
@@ -39,19 +41,24 @@ ARGS-PDF = \
 	$(OPT-PDF)
 
 ARGS-PDF-MINIMAL = \
+	--template=template.tex \
 	--pdf-engine=lualatex
 
-# projects
+snippet : feature1.snp feature2.snp
 
-snippet: 
-	pandoc snippet/feature1.md -o $(BUILD)/feature1.html $(ARGS-HTML) --resource-path=snippet
-	pandoc snippet/feature1.md --metadata-file=snippet/meta.yaml -o $(BUILD)/feature1.tex $(ARGS-PDF-MINIMAL) --resource-path=snippet
-	pandoc snippet/feature1.md --metadata-file=snippet/meta.yaml -o $(BUILD)/feature1.pdf $(ARGS-PDF-MINIMAL) --resource-path=snippet
+%.snp: snippet/%.md
+	pandoc $< -o $(BUILD)/$*.html $(ARGS-HTML) --resource-path=snippet
+	pandoc $< -o $(BUILD)/$*.tex  $(ARGS-PDF-MINIMAL) --resource-path=snippet
+	pandoc $< -o $(BUILD)/$*.pdf  $(ARGS-PDF-MINIMAL) --resource-path=snippet
+
+gallary: snippet/gallary.md
+	pandoc $< -o $(BUILD)/gallary.html $(ARGS-HTML) -s --resource-path=snippet
 
 demo : demo/main.md
-	pandoc $< -o $(BUILD)/$@.html $(ARGS-HTML) --resource-path=demo
-	pandoc $< -o $(BUILD)/$@.tex $(ARGS-PDF) --resource-path=demo
-	pandoc $< -o $(BUILD)/$@.pdf $(ARGS-PDF) --resource-path=demo
+	pandoc $< -o $(BUILD)/$@.html $(ARGS-HTML) -s --resource-path=demo
+	pandoc $< -o $(BUILD)/$@.tex  $(ARGS-PDF)  --resource-path=demo
+	pandoc $< -o $(BUILD)/$@.pdf  $(ARGS-PDF)  --resource-path=demo
+
 
 # Not used
 #
