@@ -8,10 +8,10 @@ all:
 	mkdir -p $(BUILD)
 
 dependency:
-	wget -O filter/columns.lua  https://raw.githubusercontent.com/jdutant/columns/master/columns.lua
+	wget -O filter/columns.lua https://raw.githubusercontent.com/jdutant/columns/master/columns.lua
 
 clean :
-		rm -f $(BUILD)/*
+	rm -f $(BUILD)/*
 
 # pandoc args
 
@@ -26,7 +26,7 @@ OPT-PDF = \
 
 ARGS-BASIC = \
 	--filter pandoc-include \
-	--lua-filter columns.lua \
+	--lua-filter filter/columns.lua \
 	--listings \
 	--metadata-file default.yaml
 
@@ -53,6 +53,8 @@ snippet : feature1.snp feature2.snp
 
 gallary: snippet/gallary.md
 	pandoc $< -o $(BUILD)/gallary.html $(ARGS-HTML) -s --resource-path=snippet
+	pandoc $< -o $(BUILD)/gallary.tex $(ARGS-PDF-MINIMAL) --resource-path=snippet
+	pandoc $< -o $(BUILD)/gallary.pdf $(ARGS-PDF-MINIMAL) --resource-path=snippet
 
 demo : demo/main.md
 	pandoc $< -o $(BUILD)/$@.html $(ARGS-HTML) -s --resource-path=demo
