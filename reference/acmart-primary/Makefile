@@ -11,8 +11,10 @@ PACKAGE=acmart
 
 PDF = $(PACKAGE).pdf acmguide.pdf
 
-all:  ${PDF} ALLSAMPLES
+BIBLATEXFILES= $(wildcard *.bbx) $(wildcard *.cbx) $(wildcard *.dbx) $(wildcard *.lbx)
+SAMPLEBIBLATEXFILES=$(patsubst %,samples/%,$(BIBLATEXFILES))
 
+all:  ${PDF} ALLSAMPLES
 
 %.pdf:  %.dtx   $(PACKAGE).cls
 	pdflatex $<
@@ -36,7 +38,7 @@ acmguide.pdf: $(PACKAGE).dtx $(PACKAGE).cls
 	pdflatex $<
 
 
-ALLSAMPLES:
+ALLSAMPLES: $(SAMPLEBIBLATEXFILES)
 	cd samples; pdflatex samples.ins; cd ..
 	for texfile in samples/*.tex; do \
 		pdffile=$${texfile%.tex}.pdf; \
@@ -50,9 +52,36 @@ samples/%: %
 samples/$(PACKAGE).cls: $(PACKAGE).cls
 samples/ACM-Reference-Format.bst: ACM-Reference-Format.bst
 
+samples/abbrev.bib: ACM-Reference-Format.bst
+	perl -pe 's/MACRO ({[^}]*}) *\n/MACRO \1/' ACM-Reference-Format.bst \
+	| grep MACRO | sed 's/MACRO {/@STRING{/' \
+	| sed 's/}  *{/ = /' > samples/abbrev.bib 
+
+
+samples/%.bbx: %.bbx
+samples/%.cbx: %.cbx
+samples/%.dbx: %.dbx
+samples/%.lbx: %.lbx
+
 samples/%.pdf:  samples/%.tex   samples/$(PACKAGE).cls samples/ACM-Reference-Format.bst
 	cd $(dir $@) && pdflatex-dev $(notdir $<)
 	- cd $(dir $@) && bibtex $(notdir $(basename $<))
+	cd $(dir $@) && pdflatex-dev $(notdir $<)
+	cd $(dir $@) && pdflatex-dev $(notdir $<)
+	while ( grep -q '^LaTeX Warning: Label(s) may have changed' $(basename $<).log) \
+	  do cd $(dir $@) && pdflatex-dev $(notdir $<); done
+
+samples/sample-sigconf-biblatex.pdf: samples/sample-sigconf-biblatex.tex $(SAMPLEBIBLATEXFILES)
+	cd $(dir $@) && pdflatex-dev $(notdir $<)
+	- cd $(dir $@) && biber $(notdir $(basename $<))
+	cd $(dir $@) && pdflatex-dev $(notdir $<)
+	cd $(dir $@) && pdflatex-dev $(notdir $<)
+	while ( grep -q '^LaTeX Warning: Label(s) may have changed' $(basename $<).log) \
+	  do cd $(dir $@) && pdflatex-dev $(notdir $<); done
+
+samples/sample-acmsmall-biblatex.pdf: samples/sample-acmsmall-biblatex.tex $(SAMPLEBIBLATEXFILES)
+	cd $(dir $@) && pdflatex-dev $(notdir $<)
+	- cd $(dir $@) && biber $(notdir $(basename $<))
 	cd $(dir $@) && pdflatex-dev $(notdir $<)
 	cd $(dir $@) && pdflatex-dev $(notdir $<)
 	while ( grep -q '^LaTeX Warning: Label(s) may have changed' $(basename $<).log) \
@@ -74,7 +103,7 @@ samples/sample-lualatex.pdf:  samples/sample-lualatex.tex   samples/$(PACKAGE).c
 	while ( grep -q '^LaTeX Warning: Label(s) may have changed' $(basename $<).log) \
 	  do cd $(dir $@) && lualatex-dev $(notdir $<); done
 
-
+samples/sample-acmcp.pdf: samples/acm-jdslogo.png
 
 .PRECIOUS:  $(PACKAGE).cfg $(PACKAGE).cls
 
@@ -86,8 +115,9 @@ docclean:
 	*.dvi *.ps *.thm *.tgz *.zip *.rpi \
 	samples/$(PACKAGE).cls samples/ACM-Reference-Format.bst \
 	samples/*.log samples/*.aux samples/*.out \
-	samples/*.bbl samples/*.blg samples/*.cut 
-
+	samples/*.bbl samples/*.blg samples/*.cut \
+	samples/acm-jdslogo.png \
+	samples/*.run.xml samples/*.bcf $(SAMPLEBIBLATEXFILES)
 
 
 clean: docclean
@@ -106,7 +136,14 @@ archive:  all clean
 zip:  all clean
 	zip -r  $(PACKAGE).zip * -x '*~' -x '*.tgz' -x '*.zip' -x CVS -x 'CVS/*'
 
-documents.zip: all docclean
-	zip -r $@ acmart.pdf acmguide.pdf samples *.cls ACM-Reference-Format.*
+# distros
+distros: all docclean
+	zip -r acm-distro.zip  \
+	acmart.pdf acmguide.pdf samples *.cls ACM-Reference-Format.* \
+	--exclude samples/sample-acmengage*
+	zip -r acmengage-distro.zip samples/sample-acmengage* \
+	samples/*.bib \
+	acmart.pdf acmguide.pdf  *.cls ACM-Reference-Format.*
+
 
 .PHONY: all ALLSAMPLES docclean clean distclean archive zip

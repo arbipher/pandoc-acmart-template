@@ -1,3 +1,10 @@
+# Two root problem
+
+There is only one `root` directory for pandoc.
+Assume I don't want to copy the pandoc tools per document, I put the pandoc tools in `PANDOC_PATH` and the document to build in `DOC_PATH`.
+Pandoc finds the file based on the root, e.g. `template.tex` includes `unicode-to-latex.tex`.
+The document also finds the files based on the root, e.g. `main.md` includes `section-related-works`.
+
 # To-do
 
 - [ ] Make a demo on https://www.logicmatters.net/latex-for-logicians/

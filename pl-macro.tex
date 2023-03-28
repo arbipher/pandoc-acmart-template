@@ -1,0 +1,211 @@
+
+\usepackage{etoolbox}
+\usepackage{ifthen}
+\usepackage{xifthen}
+
+
+
+
+\newcommand{\ifnotempty}[2]{\ifthenelse{\isempty{#1}}{}{#2}}
+
+% \def\xcoloropts{usenames,dvipsnames}
+% \DeclareOption{noxcoloropts}{\def\xcoloropts{}}
+% \DeclareOption*{\PackageWarning{jhupllab}{Unknown option: \CurrentOption}}
+% \ProcessOptions\relax
+% \usepackage[dvipsnames,xcdraw]{xcolor}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Document mode routines
+
+\makeatletter
+\def\documentmode@{draft}
+\newcommand{\documentModeFinal}{\def\documentmode@{final}}
+\newcommand{\documentModeDraft}{\def\documentmode@{draft}}
+\newcommand{\isdraft}{\equal{\documentmode@}{draft}}
+\newcommand{\isfinal}{\equal{\documentmode@}{final}}
+\newcommand{\draftonly}[1]{\ifthenelse{\isdraft}{#1}{}}
+\makeatother
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Rule for mathpartir
+
+\usepackage{mathpartir}
+
+\def\MathparLineskip{\lineskip=.25cm} % limits space between rules, rule names already spacing them
+\newcommand{\bbrule}[4][]{\inferrule*[left={\bbrulename{#2}},#1]{#3}{#4}}
+\newcommand{\bbrulename}[1]{{\sc #1}}
+
+\newcommand{\fnstyle}[1]{\text{\textsmaller{\sc{#1}}}}
+\newcommand{\deffn}[2]{%
+    \expandafter\newcommand\expandafter{\csname #1\endcsname}[1][]{\fnstyle{#2}\ifthenelse{\isempty{##1}}{}{(##1)}}%
+}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Inline notes
+
+% Defines a textual style for inline notes.
+\newcommand{\notestyle}[1]{\textnormal{\scriptsize \itshape #1}}
+
+% Determines whether notes are enabled for the document.
+\newif\ifnotes
+\notestrue % notes default to enabled
+\newcommand{\nonotes}{\notesfalse} % disables notes
+
+% Defines a command to create new note commands.  This command can be run once
+% for each contributor to define the command prefix, contributor initials, and
+% color of the note text.
+
+\makeatletter
+\newcommand{\defnote}[3]{%
+    \expandafter\newcommand\expandafter{\csname #1note\endcsname}[1]{%
+        % See http://tex.stackexchange.com/questions/294693/multiple-space-hacks-generate-more-space
+        % for an explanation of this spooky whitespace-handling code.
+        \@bsphack
+        %=== instead of \@esphack: ===
+        \relax
+        \ifhmode
+            \spacefactor\@savsf
+            \ifdim\@savsk>\z@
+            \nobreak
+            \hskip\z@skip
+            % The previous action will change \lastskip, so:
+            \hskip-\@savsk
+            \hskip\@savsk      
+            % now \lastskip is almost \@savsk again.
+            \ignorespaces
+            \fi
+        \fi
+        %===========================
+        \ifnotes%
+            \draftonly{\notestyle{\color{#3}(##1 -- #2)}}%
+        \fi
+    }%
+}
+\makeatother
+
+% Define note commands for the members of the JHU PL lab.
+\definecolor{goldenrod}{rgb}{0.85, 0.65, 0.13}
+\definecolor{rawsienna}{rgb}{0.839, 0.541, 0.349}
+\defnote{s}{SS}{goldenrod} % Scott Smith
+\defnote{z}{ZP}{ForestGreen} % Zachary Palmer
+\defnote{w}{SW}{rawsienna} % Shiwei Weng
+\defnote{h}{HM}{rawsienna} % Hari Menon
+\defnote{l}{LF}{VioletRed} % Leandro Facchinetti
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% Utilities for language grammars
+
+% Defines an environment for displaying language grammars.
+% Within this environment, some commands are defined:
+%   \grule[description]{non-terminal}{productions}
+%   \gor (a symbol for separating productions)
+%   \gline (a symbol for breaking a line of productions if more space is needed)
+%   \setGrammarVertAdjustment{length} (which sets the vertical adjustment for
+%                                      the next grammar newline)
+\newcommand{\grammarNoteSpace}{\hspace{4mm}}
+\newcounter{grammarnote}
+\setcounter{grammarnote}{0}
+\newcommand{\grammarDefs}{%
+    \global\def\grammarVertAdjustment{0mm}%
+    \newcommand{\gcomment}[1]{\hfill%
+        \ifnum\value{grammarnote}=0
+            \stepcounter{grammarnote}
+            \grammarNoteSpace \textrm{\textsmaller{\itshape ##1}}
+        \fi
+    }%
+    \newcommand{\grule}[3][]{%
+        \setcounter{grammarnote}{0}
+        ##2 & \ifnotempty{##3}{::=} & \newcommand{\gcommenttext}{##1} ##3 \hfill \gcomment{##1} \endgrule
+    }%
+    \newcommand{\gskip}{&&\endgrule}%
+    \def\endgrule{\\[\grammarVertAdjustment]}%
+    \newcommand{\gor}{\mathbin{\vert}}%
+    \newcommand{\gline}{%
+        \hfill \gcomment{\gcommenttext} \\[\grammarVertAdjustment] &&
+    }%
+}
+\def\grammarColPad{\quad}%
+\newenvironment{grammar}{%
+    \begingroup%
+    \grammarDefs%
+    \begin{math}\begin{array}{@{}r@{\grammarColPad}c@{\grammarColPad}l@{}}%
+}{%
+    \end{array}\end{math}%
+    \endgroup%
+}
+\newcounter{grammarrulecount}%
+\newenvironment{grammarTwoCol}{%
+    \begingroup%
+    \grammarDefs%
+    \setcounter{grammarrulecount}{0}%
+    \renewcommand{\endgrule}{%
+        \stepcounter{grammarrulecount}%
+        \ifnum\value{grammarrulecount}=2%
+            \setcounter{grammarrulecount}{0}%
+            \\[\grammarVertAdjustment]%
+        \else%
+            &%
+        \fi%
+    }%
+    \begin{cmarray}{@{}r c l @{\qquad} r c l@{}}%
+}{
+    \end{cmarray}%
+    \endgroup%
+}
+
+% Defines a command for creating grammar terminal macros.  Grammar terminal macros always display their contents in true-type font.
+% The second argument defines the text of the command while the first (optional) argument defines the command's name.  If the name is
+% not specified, it is equal to the text as processed by the \defgtname command.  By default, this command will produce its input
+% prefixed with a lower-case "gt" (for "grammar terminal"); for instance, \defgt{x} defines a command \gtx which prints an x.
+\newcommand{\defgt}[2][]{%
+    \ifthenelse{\isempty{#2}}{%
+        \warn{Ignoring empty argument to \char`\\defgt}%
+    }{%
+        \ifthenelse{\isempty{#1}}{\defgt[\defgtname{#2}]{#2}}{%
+            \expandafter\newcommand\expandafter{\csname #1\endcsname}{\mathinner{\texttt{\gttext{#2}}}}
+        }%
+    }%
+}
+\newcommand{\defgtname}[1]{gt#1}
+\newcommand{\gttext}[1]{#1}
+
+% Defines a command for creating grammar non-terminal macros.  Grammar non-terminal macros display their contents in math font.
+% As above, the command name is derived by default from the text; in this case, the command is \defgnname, the default implementation
+% for which prefixes the text with "gn".
+\newcommand{\defgn}[2][]{%
+    \ifthenelse{\isempty{#2}}{%
+        \warn{Ignoring empty argument to \char`\\defgn}%
+    }{%
+        \ifthenelse{\isempty{#1}}{\defgn[\defgnname{#2}]{#2}}{%
+            \expandafter\newcommand\expandafter{\csname #1\endcsname}{\ensuremath{#2}}
+        }%
+    }%
+}
+\newcommand{\defgnname}[1]{gn#1}
+
+%
+% macros
+%
+
+\defgn[gre]{e}
+\defgn[lab]{\ell}
+\defgn[grv]{v}
+\defgn[grx]{x}
+
+\newcommand{\stk}{\Sigma}
+\newcommand{\envt}{\sigma}
+\newcommand{\steps}{\Rightarrow}
+
+\newcommand{\la}{\langle}
+\newcommand{\ra}{\rangle}
+
+\defgt[gtarrow]{\texttt{\upshape ->}}
+\defgt[gtfun]{\upshape fun}
+
+\newcommand{\gfun}{\gtfun \grx \gtarrow \gre}
+\newcommand{\gclo}{\la\gfun, \sigma\ra}
+
+
+% \defgt[gtclo]{\langle \gtfun \sigma \rangle}
+% \defgt[gtclo]{\gtfun \envt}

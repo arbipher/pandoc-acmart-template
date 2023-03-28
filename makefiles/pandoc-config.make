@@ -1,9 +1,20 @@
-__safe:
-	@echo pandoc-acm
+ifeq ($(OS),Windows_NT)     # is Windows_NT on XP, 2000, 7, Vista, 10...
+	detected_OS := Windows
+else
+	detected_OS := $(shell uname)
+endif
 
-dependency:
-	wget -O filter/columns.lua https://raw.githubusercontent.com/jdutant/columns/master/columns.lua
-	pip3 install pandoc-include
+ifeq ($(detected_OS),Linux)
+	LD := ldd
+else
+	LD := echo
+endif
+
+echo:
+	echo $(detected_OS)
+	echo $(LD)
+	@pwd
+
 
 # pandoc args
 OPT-CITEPROC = \

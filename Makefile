@@ -4,7 +4,10 @@
 .PHONY: all demo snippet
 
 BUILD = build
-include Makefile.pandoc-acm.mk
+PD = pandoc.exe
+
+include makefiles/dependency.make
+include makefiles/pandoc-config.make
 
 # Tasks
 all:
@@ -16,20 +19,39 @@ clean:
 snippet: feature1.snp feature2.snp
 
 %.snp: snippet/%.md
-	pandoc $< -o $(BUILD)/$*.html $(ARGS-HTML) --resource-path=snippet
-	pandoc $< -o $(BUILD)/$*.tex  $(ARGS-PDF-MINIMAL) --resource-path=snippet
-	pandoc $< -o $(BUILD)/$*.pdf  $(ARGS-PDF-MINIMAL) --resource-path=snippet
+	$(PD) $< -o $(BUILD)/$*.html $(ARGS-HTML) --resource-path=snippet
+	$(PD) $< -o $(BUILD)/$*.tex  $(ARGS-PDF-MINIMAL) --resource-path=snippet
+	$(PD) $< -o $(BUILD)/$*.pdf  $(ARGS-PDF-MINIMAL) --resource-path=snippet
 
 gallary: snippet/gallary.md
-	pandoc $< -o $(BUILD)/gallary.html $(ARGS-HTML) -s --resource-path=snippet
-	pandoc $< -o $(BUILD)/gallary.tex $(ARGS-PDF-MINIMAL) --resource-path=snippet
-	pandoc $< -o $(BUILD)/gallary.pdf $(ARGS-PDF-MINIMAL) --resource-path=snippet
+	$(PD) $< -o $(BUILD)/gallary.html $(ARGS-HTML) -s --resource-path=snippet
+	$(PD) $< -o $(BUILD)/gallary.tex $(ARGS-PDF-MINIMAL) --resource-path=snippet
+	$(PD) $< -o $(BUILD)/gallary.pdf $(ARGS-PDF-MINIMAL) --resource-path=snippet
+
+binding: demo/binding_map.md
+	$(PD) $< -o $(BUILD)/$@.tex  $(ARGS-PDF-MINIMAL)  --resource-path=demo
+	$(PD) $< -o $(BUILD)/$@.pdf  $(ARGS-PDF-MINIMAL)  --resource-path=demo
 
 demo: demo/main.md
-	pandoc $< -o $(BUILD)/$@.html $(ARGS-HTML) -s --resource-path=demo
-	pandoc $< -o $(BUILD)/$@.tex  $(ARGS-PDF)  --resource-path=demo
-	pandoc $< -o $(BUILD)/$@.pdf  $(ARGS-PDF)  --resource-path=demo
+	$(PD) $< -o $(BUILD)/$@.html $(ARGS-HTML) -s --resource-path=demo
+	$(PD) $< -o $(BUILD)/$@.tex  $(ARGS-PDF)  --resource-path=demo
+	$(PD) $< -o $(BUILD)/$@.pdf  $(ARGS-PDF)  --resource-path=demo
 
+play : demo-pllab/main.md
+	$(PD) $< -o $(BUILD)/$@.pdf $(ARGS-PDF) --resource-path=demo-pllab
+
+project : project-checkedc/main.md
+	$(PD) $< -o $(BUILD)/$@.html $(ARGS-HTML) --resource-path=project-checkedc
+	$(PD) $< -o $(BUILD)/$@.tex  $(ARGS-PDF)  --resource-path=project-checkedc
+	$(PD) $< -o $(BUILD)/$@.pdf  $(ARGS-PDF)  --resource-path=project-checkedc
+
+p0 :
+	cd dbmc-orig && pdflatex main.tex
+	mv dbmc-orig/main.pdf $(BUILD)/dbmc_orig.pdf
+
+p :
+	cd dbmc && pdflatex main.tex
+	mv dbmc/main.pdf $(BUILD)/dbmc.pdf
 
 # Not used
 #

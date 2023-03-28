@@ -1,4 +1,4 @@
-\documentclass[manuscript, timestamp, review, authorversion, nonacm, natbib=false]{acmart}
+\documentclass[manuscript, timestamp, authorversion, nonacm, pbalance, natbib=false]{acmart}
 
 \usepackage[ruled]{algorithm2e} % For algorithms
 \renewcommand{\algorithmcfname}{ALGORITHM}
@@ -35,6 +35,7 @@
 % unicode support
 %
 \input{unicode-to-latex.tex}
+\input{pl-macro.tex}
 
 % href support
 \usepackage{hyperref}
@@ -49,7 +50,11 @@
 $if(verbatim-in-note)$
 \usepackage{fancyvrb}
 $endif$
-\usepackage{xcolor}
+
+%
+% \usepackage{xcolor}
+%
+
 \IfFileExists{xurl.sty}{\usepackage{xurl}}{} % add URL line breaks if available
 \IfFileExists{bookmark.sty}{\usepackage{bookmark}}{\usepackage{hyperref}}
 \hypersetup{
@@ -176,6 +181,14 @@ $endif$
 %
 % -- END -- %
 %
+% \usepackage{geometry}
+%  \geometry{
+%    paperwidth=50mm,
+%    paperheight=30mm,
+%   %  total={50mm,50mm},
+%    left=1mm,
+%    top=1mm,
+%  }
 
 \begin{document}
 

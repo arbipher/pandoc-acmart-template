@@ -5,3 +5,7 @@ __latexindent_temp.tex
 .texpadtmp/
 
 project-*
+
+demo-pllab
+dbmc-orig
+dbmc
