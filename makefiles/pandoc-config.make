@@ -22,7 +22,7 @@ OPT-CITEPROC = \
 	
 OPT-PDF = \
 	--template=template.tex \
-	--pdf-engine=lualatex
+	--pdf-engine=$(PDFLATEX)
 
 # -f gfm+yaml_metadata_block \
 
@@ -43,5 +43,8 @@ ARGS-PDF = \
 	$(OPT-PDF)
 
 ARGS-PDF-MINIMAL = \
+	--filter ./filter/dot2tex-filter.py \
+	--listings \
 	--template=template.tex \
-	--pdf-engine=lualatex
+	--pdf-engine=$(PDFLATEX)
+# --lua-filter=filter/diagram-generator.lua

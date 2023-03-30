@@ -5,6 +5,7 @@
 
 BUILD = build
 PD = pandoc.exe
+PDFLATEX = lualatex
 
 include makefiles/dependency.make
 include makefiles/pandoc-config.make
